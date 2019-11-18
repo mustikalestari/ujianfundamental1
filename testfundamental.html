@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>list todo</title>
+    <style>
+            body{
+                margin: 2em;
+                background-color: white;
+                font-family: "Lucida Console", Monaco, monospace;
+                font-size: 14px;
+                color: teal
+            }
+            table,tr,td{
+                border: 2px solid teal;
+                border-collapse: collapse;
+                padding: 10px;
+            }
+        </style>
+</head>
+<body>
+    <center>
+        <h1>Login & Register</h1>
+        <div>
+            Username: <input type="text" id="username" /> <br><br>
+            Password: <input type="password" id="password"/> <br><br>
+            <button onclick="register()">Register</button> <button onclick="login()">Login</button>
+           
+        <h2>MADING ACTIVITY</h2>
+        <table>
+            <thead>
+                <tr>
+                    <td>NO</td>
+                    <td>ACTIVITY</td>
+                    <td>DAY</td>
+                    <td>IMAGE</td>
+                    <td>ACTION</td>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td><input oninput="onBtnSearchclick()" type="text" class="searchtodo"/></td>
+                    <td>
+                        <select oninput="onBtnSearchclick()" class="searchtodo">
+                            <option>Allday</option>
+                            <option> Monday</option>
+                            <option> Tuesday</option>
+                            <option> Wednesday</option>
+                            <option> Thursday</option>
+                            <option> Friday</option>
+                        </select>
+                    </td>
+                    <td><button onclick="onBtnSearchclick()">Search</button> </td>
+                </tr>
+            </tfoot>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td><input type="text" class="addtodo"/></td>
+                    <td>
+                        <select class="addtodo">
+                            <option> Monday</option>
+                            <option> Tuesday</option>
+                            <option> Wednesday</option>
+                            <option> Thursday</option>
+                            <option> Friday</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class="addtodo"></td>
+                    <td><button onclick="onAddTodoClick()">add</button></td>
+                </tr>
+            </tfoot>
+        </table>
+    </center>
+
+</body>
+<script>
+
+class User{
+    constructor(a,b,c){
+        this.username=a,
+        this.password=b,
+        this.role=c
+    }
+}
+var datausers=[
+    new User('tari','14','user'),
+    new User('admin','12','admin'),
+]
+var datauserlogin={}
+    class Todo{
+        constructor(a,b,c){
+            this.activity=a,
+            this.day=b,
+            this.image=c
+        }
+    }
+
+    var listdata=[
+    new Todo('Study~','sunday','https://i0.wp.com/quipperhome.wpcomstaging.com/wp-content/uploads/2017/09/499a1-tips-belajar-online-agar-konsentrasi-tetap-full.png?resize=800%2C533'),
+        new Todo('Netflix','saturday','https://i.guim.co.uk/img/static/sys-images/Guardian/Pix/pictures/2015/9/29/1443548214691/4c0ac91a-9567-48e8-a675-a9756902c8be-2060x1236.jpeg?width=300&quality=85&auto=format&fit=max&s=cc2c96d4a6ae0cf866767a211115178f'),
+        new Todo('Cooking','monday','https://thenypost.files.wordpress.com/2019/01/salt-bae-swiped-our-tips-then-fired-us-for-complaining.jpg?quality=90&strip=all&w=618&h=410&crop=1')
+    ]
+    var indexedit=-1
+    var inddexdel=-2
+    const Printdata=(a)=>{
+        var output=''
+        a.forEach((val,index) => {
+            if(index==indexedit){
+                output+=`<tr>
+                            <td>${index+1}</td>
+                            <td><input type="text" id="edittodo${index}"></td>
+                            <td>
+                                <select id="edithari${index}">
+                                    <option> monday</option>
+                                    <option> tuesday</option>
+                                    <option> wednesday</option>
+                                    <option> thursday</option>
+                                    <option> friday</option>
+                                </select>    
+                            </td>
+                            <td><input type="text" id="editimg${index}"></td>
+                            <td><button onclick="cancel()">cancel</button><button onclick="save(${index})">save</button></td>
+                        </tr>`
+            }else if(index==inddexdel){
+                output+=`<tr>
+                            <td>${index+1}</td>
+                            <td>${val.activity}</td>
+                            <td>${val.day}</td>
+                            <td><img src=${val.image} height='100px'/></td>
+                            <td><button onclick="cancelDel()">No</button><button onclick="confirmDel(${index})">Yes</button></td>
+                        </tr>`
+            }else{
+                output+=`<tr>
+                            <td>${index+1}</td>
+                            <td>${val.activity}</td>
+                            <td>${val.day}</td>
+                            <td><img src=${val.image} height='100px'/></td>
+                            <td><button onclick="hapus(${index})">delete</button><button onclick="edit(${index})">edit</button></td>
+                        </tr>`
+
+            }
+        });
+        document.getElementsByTagName('tbody')[0].innerHTML=output
+    }
+    Printdata(listdata)
+
+    const hapus=(bebas)=>{
+        inddexdel=bebas
+        Printdata(listdata)
+    }
+    const cancelDel=()=>{
+        inddexdel=-2
+        Printdata(listdata)
+    }
+    const confirmDel=(bebas)=>{
+        listdata.splice(bebas,1)
+        Printdata(listdata)
+    }
+    const edit=(bebas)=>{
+        indexedit=bebas
+        Printdata(listdata)
+    }
+
+    const cancel=()=>{
+        indexedit=-1
+        Printdata(listdata)
+    }
+    const save=(bebas)=>{
+        var newtodo=document.getElementById(`edittodo${bebas}`).value
+        var newhari=document.getElementById(`edithari${bebas}`).value
+        var newimg=document.getElementById(`editimg${bebas}`).value
+        console.log(newtodo,newhari,newimg)
+        if(newtodo){
+            listdata[bebas].kegiatan=newtodo
+        }
+        if(newhari!==listdata[bebas].hari){
+            listdata[bebas].hari=newhari
+        }
+        if(newimg){
+            listdata[bebas].gambar=newimg
+        }
+        indexedit=-1
+        Printdata(listdata)
+    }
+    const onAddTodoClick=()=>{
+        var input=document.getElementsByClassName('addtodo')
+        var todobaru=input[0].value
+        var haribaru=input[1].value
+        var imagebaru=input[2].value
+        listdata.push(new Todo(todobaru,haribaru,imagebaru))
+        Printdata(listdata)
+    }
+    const onBtnSearchclick=()=>{
+        var input=document.getElementsByClassName("searchtodo")
+        var namasearch=input[0].value
+        var hariSearch=input[1].value
+        var newarr=listdata.filter((val)=>val.kegiatan.toLowerCase().startsWith(namasearch.toLowerCase())&&                          (val.hari.toLowerCase().startsWith(hariSearch.toLowerCase())||hariSearch=='Allday'))
+        // console.log(newarr)
+        Printdata(newarr)
+    }
+    //hua mau nangis login nya cannot be use tp 
+    const login=()=>{
+        var username=document.getElementById('username').value
+        var pass=document.getElementById('password').value
+        var arraybaru=datausers.filter('h1')[1].innerHTML=`hi ${datauserlogin.username}`
+            if(datauserlogin.role=='admin'){
+                document.getElementsByTagName('h1')[0].innerHTML=''
+                document.getElementsByTagName('h1')[2].innerHTML='hi admin tari'
+            document.getElementsByTagName('div')[0].innerHTML=''
+            }else{
+            document.getElementsByTagName('h1')[0].innerHTML=''
+            document.getElementsByTagName('h1')[2].innerHTML='ini madding kamu'
+            document.getElementsByTagName('div')[0].innerHTML=''          
+            printdataProduk(listdata)
+        }
+        document.getElementsByTagName('p')[1].innerHTML=`<button onclick="logoutuser()"> logout</button>`
+    }//sumpah ga ada waktu lagi buat lanjuting login+logout+regis
+    //giving up HAHAHAHAH
+
+
+</script>
+</html>
